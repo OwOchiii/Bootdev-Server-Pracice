@@ -13,5 +13,7 @@ export function middlewareMetricsInc(req, res, next) {
 }
 export function middlewareErrorHandler(err, req, res, next) {
     console.log(err);
-    res.status(500).json({ error: "Something went wrong on our end" });
+    const statusCode = err.statusCode || 500;
+    const message = err.message || "Something went wrong on our end";
+    res.status(statusCode).json({ error: message });
 }
