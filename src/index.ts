@@ -5,6 +5,13 @@ import { handlerMetrics, handlerReset } from "./api/metrics.js";
 import { handlerValidateChirp } from "./api/chirps.js";
 import path from "path";
 import { fileURLToPath } from "url";
+import postgres from "postgres";
+import { migrate } from "drizzle-orm/postgres-js/migrator";
+import { drizzle } from "drizzle-orm/postgres-js";
+import { config } from "./config.js";
+
+const migrationClient = postgres(config.db.url, { max: 1 });
+await migrate(drizzle(migrationClient), config.db.migrationConfig);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

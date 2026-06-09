@@ -8,12 +8,28 @@ function envOrThrow(key: string): string {
   return value;
 }
 
-export type APIConfig = {
-  fileserverHits: number;
-  dbURL: string;
+import type { MigrationConfig } from "drizzle-orm/migrator";
+
+const migrationConfig: MigrationConfig = {
+  migrationsFolder: "./src/db/migrations",
 };
 
-export const config: APIConfig = {
-  fileserverHits: 0,
-  dbURL: envOrThrow("DB_URL"),
+export type APIConfig = {
+  fileserverHits: number;
 };
+
+export type DBConfig = {
+  url: string;
+  migrationConfig: MigrationConfig;
+};
+
+export const config = {
+  api: {
+    fileserverHits: 0,
+  } as APIConfig,
+  db: {
+    url: envOrThrow("DB_URL"),
+    migrationConfig,
+  } as DBConfig,
+};
+
