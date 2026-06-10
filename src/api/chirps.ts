@@ -1,27 +1,48 @@
 import { Request, Response } from "express";
 import { BadRequestError } from "../errors.js";
+import { createChirp } from "../db/queries/chirps.js";
 
-export function handlerValidateChirp(req: Request, res: Response) {
-    const { body } = req.body;
+function cleanText(text: string): string {
+    const profaneWords = ["kerfuffle", "sharbert", "fornax"];
+    const array = text.split(/\s+/);
+    
+    for (let i = 0; i < array.length; i++) {
+        const cleanWord = array[i].replace(/[^a-zA-Z]/g, "").toLowerCase();
+        if (profaneWords.includes(cleanWord)) {
+            array[i] = "****";
+        }
+    }
+    
+    return array.join(" ");
+}
+
+export async function handlerCreateChirp(req: Request, res: Response) {
+    const { body, userId } = req.body;
 
     if (!body || typeof body !== "string") {
-        res.status(400).json({ error: "Invalid request body" });
-        return;
+        throw new BadRequestError("Invalid request body");
+    }
+
+    if (!userId || typeof userId !== "string") {
+        throw new BadRequestError("Invalid user ID");
     }
 
     if (body.length > 140) {
         throw new BadRequestError("Chirp is too long. Max length is 140");
     }
 
-    res.status(200).json({ cleanedBody: filterFunction(body), valid: true });
-}
+    const cleanedBody = cleanText(body);
+    
+    const chirp = await createChirp({
+        body: cleanedBody,
+        userId,
+    });
 
-export function filterFunction(str: string): string {
-    let array = str.split(/\s+/);
-    for (let i = 0; i < array.length; i++) {
-        if (array[i].toLowerCase() === "kerfuffle" || array[i].toLowerCase() === "sharbert" || array[i].toLowerCase() === "fornax") {
-            array[i] = "****";
-        }
-    }
-    return array.join(" ");
+    res.status(201).json({
+        id: chirp.id,
+        createdAt: chirp.createdAt,
+        updatedAt: chirp.updatedAt,
+        body: chirp.body,
+        userId: chirp.userId,
+    });
 }
