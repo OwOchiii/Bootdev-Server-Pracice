@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { BadRequestError } from "../errors.js";
-import {createChirp, getAllChirps} from "../db/queries/chirps.js";
+import {createChirp, getAllChirps, getChirpById} from "../db/queries/chirps.js";
 
 function cleanText(text: string): string {
     const profaneWords = ["kerfuffle", "sharbert", "fornax"];
@@ -50,4 +50,15 @@ export async function handlerCreateChirp(req: Request, res: Response) {
 export async function handlerGetAllChirps(req: Request, res: Response) {
     const chirps = await getAllChirps();
     res.status(200).json(chirps);
+}
+
+export async function handlerGetChirpById(req: Request, res: Response) {
+    const { id } = req.params;
+
+    if (!id || typeof id !== "string") {
+        throw new BadRequestError("Invalid ID");
+    }
+    
+    const chirp = await getChirpById(id);
+    res.status(200).json(chirp);
 }
