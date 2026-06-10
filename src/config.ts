@@ -16,6 +16,7 @@ const migrationConfig: MigrationConfig = {
 
 export type APIConfig = {
   fileserverHits: number;
+  platform: string;
 };
 
 export type DBConfig = {
@@ -26,6 +27,7 @@ export type DBConfig = {
 export const config = {
   api: {
     fileserverHits: 0,
+    platform: envOrThrow("PLATFORM"),
   } as APIConfig,
   db: {
     url: envOrThrow("DB_URL"),
