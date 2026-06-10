@@ -8,8 +8,8 @@ export function middlewareLogResponses(req, res, next) {
     next();
 }
 export function middlewareMetricsInc(req, res, next) {
-    config.fileserverHits++;
-    next();
+    config.api.fileserverHits++;
+    next;
 }
 export function middlewareErrorHandler(err, req, res, next) {
     console.log(err);
