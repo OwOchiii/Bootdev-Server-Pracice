@@ -8,6 +8,6 @@ export async function createChirp(chirp: NewChirp) {
     .returning();
   return result;
 }
-export async function getAllChirps() {
+export async function getAllChirps()  {
   return db.select().from(chirps);
 }

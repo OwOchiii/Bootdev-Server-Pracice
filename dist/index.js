@@ -2,7 +2,7 @@ import express from "express";
 import { handlerReadiness } from "./api/readiness.js";
 import { middlewareLogResponses, middlewareMetricsInc, middlewareErrorHandler } from "./api/middleware.js";
 import { handlerMetrics, handlerReset } from "./api/metrics.js";
-import { handlerCreateChirp } from "./api/chirps.js";
+import { handlerCreateChirp, handlerGetAllChirps } from "./api/chirps.js";
 import { handlerCreateUser } from "./api/users.js";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -24,6 +24,7 @@ app.post("/api/chirps", handlerCreateChirp);
 app.post("/api/users", handlerCreateUser);
 app.get("/admin/metrics", handlerMetrics);
 app.post("/admin/reset", handlerReset);
+app.get("/api/chirps", handlerGetAllChirps);
 app.use(middlewareErrorHandler);
 app.listen(PORT, () => {
     console.log(`Server is running at http://localhost:${PORT}`);

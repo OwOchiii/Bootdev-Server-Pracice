@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { BadRequestError } from "../errors.js";
-import { createChirp } from "../db/queries/chirps.js";
+import {createChirp, getAllChirps} from "../db/queries/chirps.js";
 
 function cleanText(text: string): string {
     const profaneWords = ["kerfuffle", "sharbert", "fornax"];
@@ -45,4 +45,9 @@ export async function handlerCreateChirp(req: Request, res: Response) {
         body: chirp.body,
         userId: chirp.userId,
     });
+}
+
+export async function handlerGetAllChirps(req: Request, res: Response) {
+    const chirps = await getAllChirps();
+    res.status(200).json(chirps);
 }
