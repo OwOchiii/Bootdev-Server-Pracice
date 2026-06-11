@@ -58,7 +58,7 @@ export async function handlerGetChirpById(req: Request, res: Response) {
     if (!id || typeof id !== "string") {
         throw new BadRequestError("Invalid ID");
     }
-    
+
     const chirp = await getChirpById(id);
     res.status(200).json(chirp);
 }
