@@ -24,6 +24,8 @@ export type DBConfig = {
   migrationConfig: MigrationConfig;
 };
 
+
+
 export const config = {
   api: {
     fileserverHits: 0,
@@ -33,5 +35,6 @@ export const config = {
     url: envOrThrow("DB_URL"),
     migrationConfig,
   } as DBConfig,
+  jwtSecret: envOrThrow("JWT_SECRET"),
 };
 

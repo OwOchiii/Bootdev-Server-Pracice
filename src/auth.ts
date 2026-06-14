@@ -22,5 +22,16 @@ export function validateJWT(tokenString: string, secret: string): string{
     catch (err) {
         throw new ForbiddenError("Invalid token");
     }
+}
 
+export function getBearerToken(reg: Request) : string{
+    const authHeader = reg.headers.get("Authorization");
+    if (!authHeader) {
+        throw new ForbiddenError("No token provided");
+    }
+    const token = authHeader.split(" ")[1];
+    if (!token) {
+        throw new ForbiddenError("Invalid token");
+    }
+    return token;
 }
