@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import {createUser, getUserByEmail} from "../db/queries/users.js";
 import {BadRequestError, UnauthorizedError} from "../errors.js";
 import {checkPasswordHash, hashPassword, makeJWT} from "../auth.js";
+import {config} from "../config.js";
 
 export async function handlerCreateUser(req: Request, res: Response) {
     const { email,password } = req.body;
@@ -41,7 +42,7 @@ export async function handlerLogin(req: Request, res: Response) {
         throw new UnauthorizedError("Invalid email or password");
     }
 
-    let jwtToken = makeJWT(login.id, expiredsInSeconds, process.env.JWT_SECRET!);
+    let jwtToken = makeJWT(login.id, expiredsInSeconds, config.jwtSecret);
 
 
     return res.status(200).json({id: login.id, email: login.email, createdAt: login.createdAt, updatedAt: login.updatedAt,token: jwtToken})

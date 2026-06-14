@@ -1,6 +1,8 @@
 import { Request, Response } from "express";
-import { BadRequestError } from "../errors.js";
+import {BadRequestError, ForbiddenError} from "../errors.js";
 import {createChirp, getAllChirps, getChirpById} from "../db/queries/chirps.js";
+import {getBearerToken, validateJWT} from "../auth.js";
+import {config} from "../config.js";
 
 function cleanText(text: string): string {
     const profaneWords = ["kerfuffle", "sharbert", "fornax"];
@@ -17,7 +19,10 @@ function cleanText(text: string): string {
 }
 
 export async function handlerCreateChirp(req: Request, res: Response) {
-    const { body, userId } = req.body;
+    const { body} = req.body;
+
+    let token = getBearerToken(req);
+    const userId = validateJWT(token, config.jwtSecret);
 
     if (!body || typeof body !== "string") {
         throw new BadRequestError("Invalid request body");

@@ -1,7 +1,7 @@
 import * as argon2 from 'argon2';
 import jwt from "jsonwebtoken";
 import {ForbiddenError} from "./errors.js";
-
+import { Request, Response } from "express"
 
 export function hashPassword(password: string) {
     return argon2.hash(password);
@@ -17,7 +17,8 @@ export function makeJWT(userID: string, expiresIn: number, secret: string): stri
 
 export function validateJWT(tokenString: string, secret: string): string{
     try {
-        return jwt.verify(tokenString, secret) as string;
+        let payload = jwt.verify(tokenString, secret) as jwt.JwtPayload;
+        return payload.userID as string;
     }
     catch (err) {
         throw new ForbiddenError("Invalid token");
@@ -25,13 +26,18 @@ export function validateJWT(tokenString: string, secret: string): string{
 }
 
 export function getBearerToken(reg: Request) : string{
-    const authHeader = reg.headers.get("Authorization");
-    if (!authHeader) {
-        throw new ForbiddenError("No token provided");
+    let authHeader: string | undefined;
+    if (reg !== undefined){
+        authHeader = reg.get("Authorization");
     }
+
+    if (!authHeader) {
+        throw new ForbiddenError("Token not found or invalid format");
+    }
+
     const token = authHeader.split(" ")[1];
     if (!token) {
-        throw new ForbiddenError("Invalid token");
+        throw new ForbiddenError("Token not found");
     }
     return token;
 }
