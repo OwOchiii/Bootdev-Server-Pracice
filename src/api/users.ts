@@ -25,7 +25,7 @@ export async function handlerCreateUser(req: Request, res: Response) {
 }
 
 export async function handlerLogin(req: Request, res: Response) {
-    const { email, password } = req.body;
+    const { email, password,expiredsInSeconds } = req.body;
 
     const login = await getUserByEmail(email);
 
