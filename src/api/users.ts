@@ -111,5 +111,7 @@ export async function handlerUpdateUser(req: Request, res: Response) {
 
     let hashedPassword = await hashPassword(password);
     await updateUser(email, hashedPassword, userId);
-    return res.status(200).send();
+    const updatedUser = await getUserByEmail(email);
+
+    return res.status(200).json({id: updatedUser.id, email: updatedUser.email, createdAt: updatedUser.createdAt, updatedAt: updatedUser.updatedAt});
 }
