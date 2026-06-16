@@ -88,7 +88,8 @@ export async function handlerRevokeToken(req: Request, res: Response) {
     }
 
     await revokeRefreshToken(refreshToken[0].token);
-    
+
+    return res.status(204)
 
 
 }
