@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import {createUser, getUserByEmail} from "../db/queries/users.js";
 import {BadRequestError, UnauthorizedError} from "../errors.js";
-import {checkPasswordHash, hashPassword, makeJWT, makeRefreshToken} from "../auth.js";
+import {checkPasswordHash, getBearerToken, hashPassword, makeJWT, makeRefreshToken} from "../auth.js";
 import {config} from "../config.js";
-import {createRefreshToken} from "../db/queries/token.js";
+import {createRefreshToken, getRefreshToken} from "../db/queries/token.js";
 
 export async function handlerCreateUser(req: Request, res: Response) {
     const { email,password } = req.body;
@@ -45,7 +45,32 @@ export async function handlerLogin(req: Request, res: Response) {
 
     let refreshToken = makeRefreshToken();
 
-    createRefreshToken(refreshToken, login.id);
+    await createRefreshToken(refreshToken, login.id);
 
     return res.status(200).json({id: login.id, email: login.email, createdAt: login.createdAt, updatedAt: login.updatedAt,token: jwtToken,refreshToken: refreshToken})
+}
+
+export async function handlerRefreshToken(req: Request, res: Response) {
+    const token = getBearerToken(req);
+    if (!token) {
+        throw new UnauthorizedError("Token not found");
+    }
+
+    const refreshToken = await getRefreshToken(token);
+
+    if (!refreshToken) {
+        throw new UnauthorizedError("Invalid token");
+    }
+
+    if (refreshToken[0].revokedAt) {
+        throw new UnauthorizedError("Token revoked");
+    }
+
+    if (refreshToken[0].expiresAt < new Date()) {
+        throw new UnauthorizedError("Token expired");
+    }
+
+    let jwtToken = makeJWT(refreshToken[0].user_id, 3600, config.jwtSecret);
+
+    return res.status(200).json({token: jwtToken});
 }

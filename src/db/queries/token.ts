@@ -13,3 +13,7 @@ export async function createRefreshToken(refreshToken: string, userId: string) {
     .returning();
   return result;
 }
+
+export async function getRefreshToken(token: string) {
+    return db.select().from(refresh_token).where(eq(refresh_token.token, token));
+}
