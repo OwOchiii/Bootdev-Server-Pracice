@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import {createUser, getUserByEmail} from "../db/queries/users.js";
+import {createUser, getUserByEmail, updateUser} from "../db/queries/users.js";
 import {BadRequestError, UnauthorizedError} from "../errors.js";
-import {checkPasswordHash, getBearerToken, hashPassword, makeJWT, makeRefreshToken} from "../auth.js";
+import {checkPasswordHash, getBearerToken, hashPassword, makeJWT, makeRefreshToken, validateJWT} from "../auth.js";
 import {config} from "../config.js";
 import {createRefreshToken, getRefreshToken, revokeRefreshToken} from "../db/queries/token.js";
 
@@ -100,6 +100,9 @@ export async function handlerRevokeToken(req: Request, res: Response) {
 
 export async function handlerUpdateUser(req: Request, res: Response) {
     const token = getBearerToken(req);
+
+    const userId = validateJWT(token, config.jwtSecret);
+
     if (!token) {
         throw new UnauthorizedError("Token not found");
     }
@@ -107,5 +110,6 @@ export async function handlerUpdateUser(req: Request, res: Response) {
     const {email, password} = req.body;
 
     let hashedPassword = await hashPassword(password);
-    
+    await updateUser(email, hashedPassword, userId);
+    return res.status(200).send();
 }
