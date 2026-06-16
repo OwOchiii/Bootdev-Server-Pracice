@@ -97,3 +97,15 @@ export async function handlerRevokeToken(req: Request, res: Response) {
     return res.status(204).send()
 
 }
+
+export async function handlerUpdateUser(req: Request, res: Response) {
+    const token = getBearerToken(req);
+    if (!token) {
+        throw new UnauthorizedError("Token not found");
+    }
+
+    const {email, password} = req.body;
+
+    let hashedPassword = await hashPassword(password);
+    
+}
