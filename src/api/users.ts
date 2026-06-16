@@ -3,7 +3,7 @@ import {createUser, getUserByEmail} from "../db/queries/users.js";
 import {BadRequestError, UnauthorizedError} from "../errors.js";
 import {checkPasswordHash, getBearerToken, hashPassword, makeJWT, makeRefreshToken} from "../auth.js";
 import {config} from "../config.js";
-import {createRefreshToken, getRefreshToken} from "../db/queries/token.js";
+import {createRefreshToken, getRefreshToken, revokeRefreshToken} from "../db/queries/token.js";
 
 export async function handlerCreateUser(req: Request, res: Response) {
     const { email,password } = req.body;
@@ -81,5 +81,14 @@ export async function handlerRevokeToken(req: Request, res: Response) {
         throw new UnauthorizedError("Token not found");
     }
 
+    const refreshToken = await getRefreshToken(token);
+
+    if (!refreshToken) {
+        throw new UnauthorizedError("Invalid token");
+    }
+
+    await revokeRefreshToken(refreshToken[0].token);
     
+
+
 }
