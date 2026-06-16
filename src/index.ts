@@ -3,7 +3,7 @@ import { handlerReadiness } from "./api/readiness.js";
 import { middlewareLogResponses, middlewareMetricsInc, middlewareErrorHandler } from "./api/middleware.js";
 import { handlerMetrics, handlerReset } from "./api/metrics.js";
 import {handlerCreateChirp, handlerGetAllChirps, handlerGetChirpById} from "./api/chirps.js";
-import {handlerCreateUser, handlerLogin} from "./api/users.js";
+import {handlerCreateUser, handlerLogin, handlerRefreshToken} from "./api/users.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import postgres from "postgres";
@@ -32,6 +32,7 @@ app.post("/api/login", handlerLogin);
 app.get("/admin/metrics", handlerMetrics);
 app.post("/admin/reset", handlerReset);
 app.post("/api/refresh",handlerRefreshToken);
+app.post("")
 
 app.use(middlewareErrorHandler);
 
