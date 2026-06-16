@@ -23,3 +23,5 @@ export async function getUserByEmail(email: string) {
 export async function updateUser(email: string, hashed_password: string,user_id : string) {
   await db.update(users).set({hashed_password: hashed_password,email:email}).where(eq(users.id, user_id));
 }
+
+export async function getUserById(id: string) {return db.select().from(users).where(eq(users.id, id));}
