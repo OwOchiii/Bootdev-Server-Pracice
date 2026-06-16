@@ -27,7 +27,7 @@ export async function handlerCreateUser(req: Request, res: Response) {
 }
 
 export async function handlerLogin(req: Request, res: Response) {
-    let { email, password} = req.body;
+    let {email,password} = req.body;
 
 
 
@@ -58,21 +58,26 @@ export async function handlerRefreshToken(req: Request, res: Response) {
 
     const refreshToken = await getRefreshToken(token);
 
-    if (!refreshToken) {
+    // FIX 1: Safely check if refreshToken is null, undefined, or an empty array
+    if (!refreshToken || !Array.isArray(refreshToken) || refreshToken.length === 0) {
         throw new UnauthorizedError("Invalid token");
     }
 
-    if (refreshToken[0].revokedAt) {
+    // FIX 2: Use Optional Chaining (?.) just to be absolutely bulletproof
+    const tokenData = refreshToken[0];
+
+    if (tokenData?.revokedAt) {
         throw new UnauthorizedError("Token revoked");
     }
 
-    if (refreshToken[0].expiresAt < new Date()) {
+    // Ensure expiresAt exists before comparing
+    if (!tokenData?.expiresAt || tokenData.expiresAt < new Date()) {
         throw new UnauthorizedError("Token expired");
     }
 
-    let jwtToken = makeJWT(refreshToken[0].user_id, 3600, config.jwtSecret);
+    let jwtToken = makeJWT(tokenData.user_id, 3600, config.jwtSecret);
 
-    return res.status(200).json({token: jwtToken});
+    return res.status(200).json({ token: jwtToken });
 }
 
 export async function handlerRevokeToken(req: Request, res: Response) {
@@ -84,12 +89,11 @@ export async function handlerRevokeToken(req: Request, res: Response) {
     const refreshToken = await getRefreshToken(token);
 
     if (!refreshToken) {
-        throw new UnauthorizedError("Invalid token");
+        throw new UnauthorizedError("Invalid token(handlerRevokeToken)");
     }
 
     await revokeRefreshToken(refreshToken[0].token);
 
-    return res.status(204)
-
+    return res.status(204).send()
 
 }

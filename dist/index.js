@@ -3,7 +3,7 @@ import { handlerReadiness } from "./api/readiness.js";
 import { middlewareLogResponses, middlewareMetricsInc, middlewareErrorHandler } from "./api/middleware.js";
 import { handlerMetrics, handlerReset } from "./api/metrics.js";
 import { handlerCreateChirp, handlerGetAllChirps, handlerGetChirpById } from "./api/chirps.js";
-import { handlerCreateUser, handlerLogin } from "./api/users.js";
+import { handlerCreateUser, handlerLogin, handlerRefreshToken, handlerRevokeToken } from "./api/users.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import postgres from "postgres";
@@ -27,6 +27,8 @@ app.post("/api/users", handlerCreateUser);
 app.post("/api/login", handlerLogin);
 app.get("/admin/metrics", handlerMetrics);
 app.post("/admin/reset", handlerReset);
+app.post("/api/refresh", handlerRefreshToken);
+app.post("/api/revoke", handlerRevokeToken);
 app.use(middlewareErrorHandler);
 app.listen(PORT, () => {
     console.log(`Server is running at http://localhost:${PORT}`);

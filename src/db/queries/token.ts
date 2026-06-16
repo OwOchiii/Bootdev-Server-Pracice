@@ -19,5 +19,5 @@ export async function getRefreshToken(token: string) {
 }
 
 export async function revokeRefreshToken(token: string) {
-    db.update(refresh_token).set({revokedAt: new Date()}).where(eq(refresh_token.token, token));
+    await db.update(refresh_token).set({revokedAt: new Date()}).where(eq(refresh_token.token, token));
 }
