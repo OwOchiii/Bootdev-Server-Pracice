@@ -1,8 +1,9 @@
 import { Request, Response } from "express";
 import {createUser, getUserByEmail} from "../db/queries/users.js";
 import {BadRequestError, UnauthorizedError} from "../errors.js";
-import {checkPasswordHash, hashPassword, makeJWT} from "../auth.js";
+import {checkPasswordHash, hashPassword, makeJWT, makeRefreshToken} from "../auth.js";
 import {config} from "../config.js";
+import {createRefreshToken} from "../db/queries/token.js";
 
 export async function handlerCreateUser(req: Request, res: Response) {
     const { email,password } = req.body;
@@ -26,11 +27,9 @@ export async function handlerCreateUser(req: Request, res: Response) {
 }
 
 export async function handlerLogin(req: Request, res: Response) {
-    let { email, password,expiredsInSeconds } = req.body;
+    let { email, password} = req.body;
 
-    if (!expiredsInSeconds || typeof expiredsInSeconds !== "number" || expiredsInSeconds <= 0 || expiredsInSeconds > 3600) {
-        expiredsInSeconds= 3600;
-    }
+
 
     const login = await getUserByEmail(email);
 
@@ -42,8 +41,11 @@ export async function handlerLogin(req: Request, res: Response) {
         throw new UnauthorizedError("Invalid email or password");
     }
 
-    let jwtToken = makeJWT(login.id, expiredsInSeconds, config.jwtSecret);
+    let jwtToken = makeJWT(login.id, 3600, config.jwtSecret);
 
+    let refreshToken = makeRefreshToken();
 
-    return res.status(200).json({id: login.id, email: login.email, createdAt: login.createdAt, updatedAt: login.updatedAt,token: jwtToken})
+    createRefreshToken(refreshToken, login.id);
+
+    return res.status(200).json({id: login.id, email: login.email, createdAt: login.createdAt, updatedAt: login.updatedAt,token: jwtToken,refreshToken: refreshToken})
 }

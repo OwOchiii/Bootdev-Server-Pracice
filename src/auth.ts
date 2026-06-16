@@ -2,6 +2,7 @@ import * as argon2 from 'argon2';
 import jwt from "jsonwebtoken";
 import {ForbiddenError} from "./errors.js";
 import { Request, Response } from "express"
+import {randomBytes} from "node:crypto";
 
 export function hashPassword(password: string) {
     return argon2.hash(password);
@@ -40,4 +41,8 @@ export function getBearerToken(reg: Request) : string{
         throw new ForbiddenError("Token not found");
     }
     return token;
+}
+
+export function makeRefreshToken(): string{
+    return randomBytes(256).toString("hex");
 }

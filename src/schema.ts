@@ -34,3 +34,4 @@ export const refresh_token = pgTable("refresh_token", {
 })
 export type NewUser = typeof users.$inferInsert;
 export type NewChirp = typeof chirps.$inferInsert;
+export type NewRefreshToken = typeof refresh_token.$inferInsert;
