@@ -32,7 +32,7 @@ app.post("/api/login", handlerLogin);
 app.get("/admin/metrics", handlerMetrics);
 app.post("/admin/reset", handlerReset);
 app.post("/api/refresh",handlerRefreshToken);
-app.post("")
+app.post("/api/revoke",handlerRevokeToken);
 
 app.use(middlewareErrorHandler);
 
