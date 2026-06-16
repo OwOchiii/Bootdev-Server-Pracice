@@ -74,3 +74,12 @@ export async function handlerRefreshToken(req: Request, res: Response) {
 
     return res.status(200).json({token: jwtToken});
 }
+
+export async function handlerRevokeToken(req: Request, res: Response) {
+    const token = getBearerToken(req);
+    if (!token) {
+        throw new UnauthorizedError("Token not found");
+    }
+
+    
+}
