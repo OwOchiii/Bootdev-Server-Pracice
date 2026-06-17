@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
-import {createUser, getUserByEmail, updateUser} from "../db/queries/users.js";
-import {BadRequestError, UnauthorizedError} from "../errors.js";
+import {createUser, getUserByEmail, getUserById, updateUser, upgradeChripsById} from "../db/queries/users.js";
+import {BadRequestError, NotFoundError, UnauthorizedError} from "../errors.js";
 import {checkPasswordHash, getBearerToken, hashPassword, makeJWT, makeRefreshToken, validateJWT} from "../auth.js";
 import {config} from "../config.js";
 import {createRefreshToken, getRefreshToken, revokeRefreshToken} from "../db/queries/token.js";
@@ -23,6 +23,7 @@ export async function handlerCreateUser(req: Request, res: Response) {
         email: user.email,
         createdAt: user.createdAt,
         updatedAt: user.updatedAt,
+        isChirpyRed: user.is_chirpy_red
     });
 }
 
@@ -47,7 +48,7 @@ export async function handlerLogin(req: Request, res: Response) {
 
     await createRefreshToken(refreshToken, login.id);
 
-    return res.status(200).json({id: login.id, email: login.email, createdAt: login.createdAt, updatedAt: login.updatedAt,token: jwtToken,refreshToken: refreshToken})
+    return res.status(200).json({id: login.id, email: login.email, createdAt: login.createdAt, updatedAt: login.updatedAt,token: jwtToken,refreshToken: refreshToken,isChirpyRed: login.is_chirpy_red})
 }
 
 export async function handlerRefreshToken(req: Request, res: Response) {
@@ -114,4 +115,22 @@ export async function handlerUpdateUser(req: Request, res: Response) {
     const updatedUser = await getUserByEmail(email);
 
     return res.status(200).json({id: updatedUser.id, email: updatedUser.email, createdAt: updatedUser.createdAt, updatedAt: updatedUser.updatedAt});
+}
+
+export async function handlerUpgradeUser(req: Request, res: Response) {
+
+    const {event, data} = req.body;
+
+    if (event != "user.upgraded"){
+        res.status(204).send();
+        return;
+    }
+
+    if (event === "user.upgraded"){
+        if (await getUserById(data.body.userId) == undefined){
+            throw new NotFoundError("User not found");
+        }
+        await upgradeChripsById(data.body.userId);
+        res.status(204).send();
+    }
 }

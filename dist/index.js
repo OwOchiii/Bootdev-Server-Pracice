@@ -3,7 +3,7 @@ import { handlerReadiness } from "./api/readiness.js";
 import { middlewareLogResponses, middlewareMetricsInc, middlewareErrorHandler } from "./api/middleware.js";
 import { handlerMetrics, handlerReset } from "./api/metrics.js";
 import { handlerCreateChirp, handlerDeleteChirpById, handlerGetAllChirps, handlerGetChirpById } from "./api/chirps.js";
-import { handlerCreateUser, handlerLogin, handlerRefreshToken, handlerRevokeToken, handlerUpdateUser } from "./api/users.js";
+import { handlerCreateUser, handlerLogin, handlerRefreshToken, handlerRevokeToken, handlerUpdateUser, handlerUpgradeUser } from "./api/users.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import postgres from "postgres";
@@ -31,6 +31,7 @@ app.post("/api/refresh", handlerRefreshToken);
 app.post("/api/revoke", handlerRevokeToken);
 app.put("/api/users", handlerUpdateUser);
 app.delete("/api/chirps/:id", handlerDeleteChirpById);
+app.post("/api/polka/webhooks", handlerUpgradeUser);
 app.use(middlewareErrorHandler);
 app.listen(PORT, () => {
     console.log(`Server is running at http://localhost:${PORT}`);

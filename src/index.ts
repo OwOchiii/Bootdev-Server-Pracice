@@ -8,7 +8,7 @@ import {
     handlerLogin,
     handlerRefreshToken,
     handlerRevokeToken,
-    handlerUpdateUser
+    handlerUpdateUser, handlerUpgradeUser
 } from "./api/users.js";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -41,6 +41,7 @@ app.post("/api/refresh",handlerRefreshToken);
 app.post("/api/revoke",handlerRevokeToken);
 app.put("/api/users",handlerUpdateUser);
 app.delete("/api/chirps/:id",handlerDeleteChirpById);
+app.post("/api/polka/webhooks",handlerUpgradeUser)
 
 app.use(middlewareErrorHandler);
 
