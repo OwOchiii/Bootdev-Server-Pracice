@@ -40,6 +40,7 @@ app.post("/admin/reset", handlerReset);
 app.post("/api/refresh",handlerRefreshToken);
 app.post("/api/revoke",handlerRevokeToken);
 app.put("/api/users",handlerUpdateUser);
+app.delete("/api/chirps/:chirpId",handlerDeleteChrip);
 
 app.use(middlewareErrorHandler);
 
