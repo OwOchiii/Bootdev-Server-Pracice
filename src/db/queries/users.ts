@@ -25,3 +25,7 @@ export async function updateUser(email: string, hashed_password: string,user_id 
 }
 
 export async function getUserById(id: string) {return db.select().from(users).where(eq(users.id, id));}
+
+export async function upgradeChripsById(id: string) {
+  await db.update(users).set({is_chirpy_red : true}).where(eq(users.id, id));
+}
