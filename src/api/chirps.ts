@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import {BadRequestError, ForbiddenError} from "../errors.js";
+import {BadRequestError, ForbiddenError, NotFoundError} from "../errors.js";
 import {createChirp, deleteChirpById, getAllChirps, getChirpById} from "../db/queries/chirps.js";
 import {getBearerToken, validateJWT} from "../auth.js";
 import {config} from "../config.js";
@@ -65,6 +65,7 @@ export async function handlerGetChirpById(req: Request, res: Response) {
     }
 
     const chirp = await getChirpById(id);
+    if (chirp ==undefined) throw new NotFoundError("Chirp not found");
     res.status(200).json(chirp);
 }
 
