@@ -3,7 +3,13 @@ import { handlerReadiness } from "./api/readiness.js";
 import { middlewareLogResponses, middlewareMetricsInc, middlewareErrorHandler } from "./api/middleware.js";
 import { handlerMetrics, handlerReset } from "./api/metrics.js";
 import {handlerCreateChirp, handlerGetAllChirps, handlerGetChirpById} from "./api/chirps.js";
-import {handlerCreateUser, handlerLogin, handlerRefreshToken, handlerRevokeToken} from "./api/users.js";
+import {
+    handlerCreateUser,
+    handlerLogin,
+    handlerRefreshToken,
+    handlerRevokeToken,
+    handlerUpdateUser
+} from "./api/users.js";
 import path from "path";
 import { fileURLToPath } from "url";
 import postgres from "postgres";
