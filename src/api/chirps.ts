@@ -70,15 +70,17 @@ export async function handlerGetChirpById(req: Request, res: Response) {
 
 export async function handlerDeleteChirpById(req: Request, res: Response) {
     const { id } = req.params;
-    if (!id || typeof id !== "string") {
+    if (typeof id !== "string") {
         throw new BadRequestError("Invalid ID");
     }
     const userId = validateJWT(getBearerToken(req), config.jwtSecret);
-    if (userId !== req.body.userId) {
+
+
+    if (await getChirpById(id) === null) throw new BadRequestError("Chirp not found")
+
+    if (userId !== (await getChirpById(id))?.userId) {
         throw new ForbiddenError("You are not authorized to delete this chirp");
     }
-
-    if (getChirpById(id) === null) throw new BadRequestError("Chirp not found")
 
     await deleteChirpById(id);
 

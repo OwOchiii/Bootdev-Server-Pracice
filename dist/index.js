@@ -30,7 +30,7 @@ app.post("/admin/reset", handlerReset);
 app.post("/api/refresh", handlerRefreshToken);
 app.post("/api/revoke", handlerRevokeToken);
 app.put("/api/users", handlerUpdateUser);
-app.delete("/api/chirps/:chirpId", handlerDeleteChirpById);
+app.delete("/api/chirps/:id", handlerDeleteChirpById);
 app.use(middlewareErrorHandler);
 app.listen(PORT, () => {
     console.log(`Server is running at http://localhost:${PORT}`);
