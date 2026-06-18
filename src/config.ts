@@ -36,5 +36,6 @@ export const config = {
     migrationConfig,
   } as DBConfig,
   jwtSecret: envOrThrow("JWT_SECRET"),
+  apiKey: envOrThrow("POLKA_Key"),
 };
 
