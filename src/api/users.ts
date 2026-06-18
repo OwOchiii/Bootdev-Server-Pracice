@@ -1,7 +1,15 @@
 import { Request, Response } from "express";
 import {createUser, getUserByEmail, getUserById, updateUser, upgradeChripsById} from "../db/queries/users.js";
 import {BadRequestError, NotFoundError, UnauthorizedError} from "../errors.js";
-import {checkPasswordHash, getBearerToken, hashPassword, makeJWT, makeRefreshToken, validateJWT} from "../auth.js";
+import {
+    checkPasswordHash,
+    getApiToken,
+    getBearerToken,
+    hashPassword,
+    makeJWT,
+    makeRefreshToken,
+    validateJWT
+} from "../auth.js";
 import {config} from "../config.js";
 import {createRefreshToken, getRefreshToken, revokeRefreshToken} from "../db/queries/token.js";
 
@@ -120,6 +128,10 @@ export async function handlerUpdateUser(req: Request, res: Response) {
 export async function handlerUpgradeUser(req: Request, res: Response) {
 
     const {event, data} = req.body;
+
+    if (getApiToken(req) !== config.apiKey) {
+        throw new UnauthorizedError("Invalid API token");
+    }
 
     if (event != "user.upgraded"){
         res.status(204).send();
