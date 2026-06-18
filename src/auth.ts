@@ -43,6 +43,24 @@ export function getBearerToken(reg: Request) : string{
     return token;
 }
 
+export function getApiToken(reg: Request) : string{
+    let authHeader: string | undefined;
+    if (reg !== undefined){
+        authHeader = reg.get("Authorization");
+    }
+
+    if (!authHeader) {
+        throw new UnauthorizedError("Api Token not found or invalid format");
+    }
+
+    const token = authHeader.split(" ")[1];
+    if (!token) {
+        throw new UnauthorizedError("Token not found");
+    }
+    return token;
+}
+
+
 export function makeRefreshToken(): string{
     return randomBytes(256).toString("hex");
 }
