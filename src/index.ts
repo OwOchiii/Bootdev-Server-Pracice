@@ -30,7 +30,7 @@ app.use(express.json());
 app.use(middlewareLogResponses);
 app.use("/app", middlewareMetricsInc, express.static("./src/app"));
 app.get("/api/healthz", handlerReadiness);
-app.get("/api/chirps", handlerGetAllChirps);
+app.get("/api/chirps{/:sort}", handlerGetAllChirps);
 app.get("/api/chirps/:id", handlerGetChirpById);
 app.post("/api/chirps", handlerCreateChirp);
 app.post("/api/users", handlerCreateUser);

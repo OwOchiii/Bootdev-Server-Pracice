@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import {BadRequestError, ForbiddenError, NotFoundError} from "../errors.js";
-import {createChirp, deleteChirpById, getAllChirps, getChirpById} from "../db/queries/chirps.js";
+import {createChirp, deleteChirpById, getAllChirps, getChirpById, getChirpsByUserId} from "../db/queries/chirps.js";
 import {getBearerToken, validateJWT} from "../auth.js";
 import {config} from "../config.js";
 
@@ -53,8 +53,17 @@ export async function handlerCreateChirp(req: Request, res: Response) {
 }
 
 export async function handlerGetAllChirps(req: Request, res: Response) {
-    const chirps = await getAllChirps();
-    res.status(200).json(chirps);
+    const {sort} = req.query
+
+    if (sort === "asc")
+    {
+
+    }
+
+        const chirps = await getAllChirps();
+        res.status(200).json(chirps);
+
+
 }
 
 export async function handlerGetChirpById(req: Request, res: Response) {
@@ -87,3 +96,4 @@ export async function handlerGetChirpById(req: Request, res: Response) {
 
         res.status(204).send();
     }
+
