@@ -79,7 +79,7 @@ export async function handlerDeleteChirpById(req: Request, res: Response) {
 
     if (await getChirpById(id) === null) throw new BadRequestError("Chirp not found")
 
-    if (userId !== (await getChirpById(id))?.userId) {
+    if (userId !== (await getChirpById(id)).userId) {
         throw new ForbiddenError("You are not authorized to delete this chirp");
     }
 

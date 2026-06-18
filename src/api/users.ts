@@ -127,10 +127,10 @@ export async function handlerUpgradeUser(req: Request, res: Response) {
     }
 
     if (event === "user.upgraded"){
-        if (await getUserById(data.body.userId) == undefined){
+        if (await getUserById(data.userId) == undefined){
             throw new NotFoundError("User not found");
         }
-        await upgradeChripsById(data.body.userId);
+        await upgradeChripsById(data.userId);
         res.status(204).send();
     }
 }
